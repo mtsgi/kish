@@ -1,0 +1,11 @@
+{
+    "id": "kish",
+    "name": "kish",
+    "icon": "icon.png",
+    "version": "0.0.1",
+    "author": "kit",
+
+    "view": "default.html",
+    "script": "kish.js",
+    "css": "kish.css"
+}
