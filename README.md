@@ -1,2 +1,2 @@
 # kish
-kish is Powerful Shell Script for kit.
+kish is Powerful Shell for kit.
