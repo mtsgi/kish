@@ -1,16 +1,15 @@
 ((_pid) => {
-    /*
-    if( !kish_init ){
-        $.getScript("./app/kish/kish_core.js" ).fail( ()=>{
-            System.alert("kishのエラー", "kishコアの初期化に失敗しました。");
-            return false;
-        } );
-        var kish_init = true;
-    }
-    */
+
+    $.getJSON( System.launchpath[_pid] + "kish_config.json", (data) => {
+        let props = ["background","font-family","font-size","font-weight","color","text-align","text-shadow","background-size","background-attachment"];
+        KWS.resize(_pid, data.width || "", data.height || "");
+        if( data.styles ) for( let i in data.styles ){
+            if( props.includes(i) ) S.dom( _pid, "#kish-wrapper" ).css( i, data.styles[i] );
+        }
+    });
 
     const Kish = new function(){
-        this.dir = "~"
+        this.dir = "~";
 
         this.cat = function(arg){
             let path = arg.split(" ", 1), _r = "";
@@ -71,7 +70,7 @@
         }
     
         this.kish = function(){
-            return "kish v0.2.1";
+            return "kish v0.2.2";
         }
 
         this.ls = function(){
@@ -108,6 +107,10 @@
             return count + "app(s) was uninstalled from kit.";
         }
     }
+
+    $.getJSON( System.launchpath[_pid] + "kishrc.json", (data) => {
+        for( let i of data.rc ) Kish.exec(i);
+    });
 
     S.dom(_pid, "#kish-input").on( "keypress", (e) => {
         if( e.keyCode == 13 && S.dom(_pid, "#kish-input").val() ){
