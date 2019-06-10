@@ -33,7 +33,8 @@
         this.exec = function(arg){
             S.dom(_pid, "#kish-out").append( "<div class='kish-item'><i class='fa fa-dollar-sign'></i> " + arg + "</div>" );
             let cmd = arg.split(" ", 1);
-            let args = arg.substring( arg.indexOf(" ") + 1 );
+            let args = "";
+            if( arg.indexOf(" ") != -1 ) args = arg.substring( arg.indexOf(" ") + 1 );
             if( !Kish[cmd] ){
                 S.dom(_pid, "#kish-out").append( "<div class='kish-item'><i class='fa fa-angle-double-right'></i> kishコマンドは存在しません: " + cmd + "</div>" );
                 return false;  
@@ -70,7 +71,20 @@
         }
     
         this.kish = function(){
-            return "kish v0.2.0";
+            return "kish v0.2.1";
+        }
+
+        this.ls = function(){
+            let _r = "<i>path ~</i><br>";
+            for( let i in System.userarea ){
+                _r += "- " + i + "<br>";
+            }
+            return _r;
+        }
+
+        this.open = function(arg){
+            if( !arg ) return "ファイル名を指定してください";
+            else System.open(arg);
         }
 
         this.print = function(arg, from){
