@@ -13,13 +13,15 @@
 
         this.cat = function(arg){
             let path = arg.split(" ", 1), _r = "";
-            if( S.userarea[path] ) _r = JSON.stringify( System.userarea[path], null, 4 );
+            if( S.userarea[path] ) _r = "<pre><code>" + JSON.stringify( System.userarea[path].data + "</code></pre>", null, 4 );
             else _r = "File not found: " + path;
             return _r;
         }
 
-        this.clear = function(){
-            S.dom(_pid, "#kish-out").html("");
+        this.clear = function(arg){
+            let args = arg.split(" ");
+            let num = Number(args[0]);
+            if( !num ) S.dom(_pid, "#kish-out").html("");
             return false;
         }
     
@@ -28,6 +30,8 @@
             if( typeof arg == "object" ) _r = JSON.stringify(arg, null, 4);
             return _r;
         }
+
+        this.eval = (arg) => { return eval(arg) }
     
         this.exec = function(arg){
             S.dom(_pid, "#kish-out").append( "<div class='kish-item'><i class='fa fa-dollar-sign'></i> " + arg + "</div>" );
@@ -50,6 +54,10 @@
     
         }
 
+        this.exit = function(){
+            System.close(_pid);
+        }
+
         this.install = function(arg){
             let args = arg.split(" ");
             let iobj = new Object();
@@ -70,7 +78,21 @@
         }
     
         this.kish = function(){
-            return "kish v0.2.2";
+            return "kish v0.2.3";
+        }
+
+        this.launch = function(arg){
+            args = arg.split(" ");
+            System.launchpath[processID] = System.appdir + args[0];
+            $.getJSON( "./app/" + args[0] + "/define.json", appData ).fail( function() {
+                System.launchpath[processID] = args[0];
+                $.getJSON( args[0] + "/define.json", appData ).fail( function() {
+                    Kish.print("Faild to launch an App: " + args[0], "launch");
+                } );
+            } );
+        }
+
+        this.load = function(arg){
         }
 
         this.ls = function(){
@@ -112,7 +134,14 @@
         for( let i of data.rc ) Kish.exec(i);
     });
 
-    S.dom(_pid, "#kish-input").on( "keypress", (e) => {
+    S.dom(_pid, "#kish-input").on( "keypress keyup", (e) => {
+        let input = S.dom(_pid, "#kish-input").val().split(" ");
+
+        if( typeof Kish[ input[0] ] == "function" ){
+            S.dom(_pid, "#kish-curcmd").show().text( input[0] );
+        }
+        else S.dom(_pid, "#kish-curcmd").hide();
+
         if( e.keyCode == 13 && S.dom(_pid, "#kish-input").val() ){
             Kish.exec( S.dom(_pid, "#kish-input").val() );
             S.dom(_pid, "#kish-input").val("");

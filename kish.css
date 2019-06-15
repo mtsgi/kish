@@ -49,7 +49,7 @@
   font-size: 20px;
   text-shadow: 0 1px 2px rgba(0, 0, 0, .8);
   color: #f0f0f0;
-  font-weight: 100;
+  font-weight: 400;
 }
 
 #kish-out {
@@ -89,4 +89,27 @@
   box-shadow: 0 1px 1px 0 rgba(0, 0, 0, .5);
   border-radius: 4px;
   margin-right: 4px;
+}
+
+#kish-curcmd{
+  display: none;
+  position: absolute;
+  left: 8px;
+  bottom: 52px;
+  background: #12bf12;
+  color: #ffffff;
+  border-radius: 4px;
+  font-size: 14px;
+  padding: 2px 6px;
+  box-shadow: 0 1px 3px 0 rgba(0,0,0,.4);
+}
+
+#kish-curcmd:after{
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border: 5px solid transparent;
+  border-top: 7px solid #12bf12;
 }
