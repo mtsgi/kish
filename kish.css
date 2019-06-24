@@ -1,6 +1,7 @@
 .winc-kish {
   padding: 0;
   background: transparent;
+	backdrop-filter: blur(10px);
 }
 
 #kish-form {

@@ -1,10 +1,13 @@
 ((_pid) => {
 
     $.getJSON( System.launchpath[_pid] + "kish_config.json", (data) => {
-        let props = ["background","font-family","font-size","font-weight","color","text-align","text-shadow","background-size","background-attachment"];
+        let props = ["background","font-family","font-size","font-weight","color","text-align","text-shadow","background-size","background-attachment","backdrop-filter"];
         KWS.resize(_pid, data.width || "", data.height || "");
         if( data.styles ) for( let i in data.styles ){
-            if( props.includes(i) ) S.dom( _pid, "#kish-wrapper" ).css( i, data.styles[i] );
+            if( props.includes(i) ){
+                S.dom( _pid, "#kish-wrapper" ).css( i, data.styles[i] );
+                if( i == "backdrop-filter" ) S.dom( _pid ).css( i, data.styles[i] );
+            }
         }
     });
 
@@ -78,7 +81,7 @@
         }
     
         this.kish = function(){
-            return "kish v0.2.3";
+            return "kish v0.2.4";
         }
 
         this.launch = function(arg){
@@ -127,6 +130,10 @@
             localStorage.setItem("kit-installed", JSON.stringify(System.installed));
             $.getJSON("config/apps.json", System.initLauncher);
             return count + "app(s) was uninstalled from kit.";
+        }
+
+        this.ver = function(){
+            return System.version;
         }
     }
 
