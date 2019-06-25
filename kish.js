@@ -11,6 +11,8 @@
         }
     });
 
+    let kishHistory = [], kishCur = -1;
+
     const Kish = new function(){
         this.dir = "~";
 
@@ -40,6 +42,8 @@
             S.dom(_pid, "#kish-out").append( "<div class='kish-item'><i class='fa fa-dollar-sign'></i> " + arg + "</div>" );
             let cmd = arg.split(" ", 1);
             let args = "";
+            kishHistory.unshift( arg );
+            kishCur = -1;
             if( arg.indexOf(" ") != -1 ) args = arg.substring( arg.indexOf(" ") + 1 );
             if( !Kish[cmd] ){
                 S.dom(_pid, "#kish-out").append( "<div class='kish-item'><i class='fa fa-angle-double-right'></i> kishコマンドは存在しません: " + cmd + "</div>" );
@@ -141,7 +145,7 @@
         for( let i of data.rc ) Kish.exec(i);
     });
 
-    S.dom(_pid, "#kish-input").on( "keypress keyup", (e) => {
+    S.dom(_pid, "#kish-input").on( "keypress keyup keydown", (e) => {
         let input = S.dom(_pid, "#kish-input").val().split(" ");
 
         if( typeof Kish[ input[0] ] == "function" ){
@@ -154,6 +158,25 @@
             S.dom(_pid, "#kish-input").val("");
         }
     } );
+
+    S.dom(_pid, "#kish-input").on( "keydown", (e) => {
+        if( e.keyCode == 38 ){
+            if( kishCur < kishHistory.length - 1 ){
+                kishCur ++;
+                S.dom(_pid, "#kish-input").val( kishHistory[kishCur] );
+            }
+        }
+        else if( e.keyCode == 40 ){
+            if( kishCur > 0 ){
+                kishCur --;
+                S.dom(_pid, "#kish-input").val( kishHistory[kishCur] );
+            }
+            else if( kishCur == 0 ){
+                kishCur = -1;
+                S.dom(_pid, "#kish-input").val( "" );
+            }
+        }
+    });
 
     KWS.changeWindowTitle(_pid, "(kish)"+ System.username);
 })(pid);
