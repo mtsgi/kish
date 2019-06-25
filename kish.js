@@ -39,12 +39,12 @@
         this.eval = (arg) => { return eval(arg) }
     
         this.exec = function(arg){
-            S.dom(_pid, "#kish-out").append( "<div class='kish-item'><i class='fa fa-dollar-sign'></i> " + arg + "</div>" );
             let cmd = arg.split(" ", 1);
             let args = "";
             kishHistory.unshift( arg );
             kishCur = -1;
             if( arg.indexOf(" ") != -1 ) args = arg.substring( arg.indexOf(" ") + 1 );
+            S.dom(_pid, "#kish-out").append( "<div class='kish-item'><i class='fa fa-dollar-sign'></i><span class='kish-highlight'>" + cmd + "</span>" + args + "</div>" );
             if( !Kish[cmd] ){
                 S.dom(_pid, "#kish-out").append( "<div class='kish-item'><i class='fa fa-angle-double-right'></i> kishコマンドは存在しません: " + cmd + "</div>" );
                 return false;  
@@ -85,7 +85,7 @@
         }
     
         this.kish = function(){
-            return "kish v0.2.4";
+            return "kish v0.3.0";
         }
 
         this.launch = function(arg){

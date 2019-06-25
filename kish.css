@@ -114,3 +114,8 @@
   border: 5px solid transparent;
   border-top: 7px solid #12bf12;
 }
+
+.kish-highlight{
+  padding: 0 5px;
+  color: #ceffb8;
+}
