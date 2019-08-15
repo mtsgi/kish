@@ -85,7 +85,7 @@
         }
     
         this.kish = function(){
-            return "kish v0.3.0";
+            return "kish v0.3.1";
         }
 
         this.launch = function(arg){
@@ -103,9 +103,9 @@
         }
 
         this.ls = function(){
-            let _r = "<i>path ~</i><br>";
+            let _r = "<strong>files</strong>    ";
             for( let i in System.userarea ){
-                _r += "- " + i + "<br>";
+                _r += i + " ";
             }
             return _r;
         }
