@@ -1,7 +1,3 @@
-- kish is Powerful Shell for kit.
-
----
-
 - **はじめに**
   - [kishドキュメント](/)
 
