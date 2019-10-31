@@ -17,3 +17,7 @@
   - [print](/print)
   - [uninstall](/uninstall)
   - [ver](/ver)
+
+- **リリースノート**
+  - [リリースノート](/releasenote)
+  
