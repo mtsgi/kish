@@ -4,20 +4,23 @@
 - **kishコマンド**
   - [cat](/cat)
   - [clear](/clear)
+  - [dialog](/dialog)
   - [echo](/echo)
   - [eval](/eval)
   - [exec](/exec)
   - [exit](/exit)
+  - [gitinfo](/gitinfo)
   - [install](/install)
   - [kish](/kish)
   - [launch](/launch)
   - [load](/load)
   - [ls](/ls)
+  - [n](/n)
   - [open](/open)
   - [print](/print)
   - [uninstall](/uninstall)
   - [ver](/ver)
+  - [y](/y)
 
 - **リリースノート**
   - [リリースノート](/releasenote)
-  
