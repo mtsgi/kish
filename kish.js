@@ -29,7 +29,12 @@
             if( !num ) _app.dom('#kish-out').html('');
             return false;
         }
-    
+
+        this.dialog = (arg, func) => {
+            Kish.print(`${arg} <code>y/n</code>`);
+            _app.data('dialogFunc', func);
+        }
+
         this.echo = function(arg){
             _r = arg;
             if( typeof arg == "object" ) _r = JSON.stringify(arg, null, 4);
@@ -70,10 +75,17 @@
                 iobj.id = data.id;
                 iobj.name = data.name;
                 iobj.icon = args[0] + data.icon;
-                System.installed.push(iobj);
-                localStorage.setItem("kit-installed", JSON.stringify(System.installed));
-                Kish.print("An app was installed from " + args[0], "install");
-                $.getJSON("config/apps.json", System.initLauncher);
+                _app.data('iobj', iobj);
+                Kish.dialog(`Are you sure to install ${iobj.name}?`, () => {
+                    if(_app.data('iobj')){
+                        System.installed.push(_app.data('iobj'));
+                        localStorage.setItem("kit-installed", JSON.stringify(System.installed));
+                        Kish.print("An app was installed from " + args[0], "install");
+                        $.getJSON("config/apps.json", System.initLauncher);
+                    }
+                    else return 'Installation error occurred.';
+                    _app.data('iobj'. null);
+                });
 
             }).fail( function() {
                 Kish.print("Faild to install an app from " + args[0], "install");
@@ -81,7 +93,7 @@
             return "Start installing...";
         }
     
-        this.kish = () => 'kish v0.4.0';
+        this.kish = () => 'kish v0.4.1';
 
         this.launch = function(arg){
             args = arg.split(" ");
@@ -102,6 +114,17 @@
             for( let i in System.userarea ) _r += `<li>${i}</li>`;
             _r += "</ul>";
             return _r;
+        }
+
+        this.n = () => {
+            let func = _app.data('dialogFunc');
+            if(func){
+                Kish.print('Canceled.');
+                _app.data('dialogFunc', null);
+            }
+            else{
+                return 'There is nothing to cancel.';
+            }
         }
 
         this.open = function(arg){
@@ -127,10 +150,19 @@
             }
             localStorage.setItem("kit-installed", JSON.stringify(System.installed));
             $.getJSON("config/apps.json", System.initLauncher);
-            return count + "app(s) was uninstalled from kit.";
+            return count + " app(s) was uninstalled from kit.";
         }
 
         this.ver = () => System.version;
+
+        this.y = () => {
+            let func = _app.data('dialogFunc');
+            if(func){
+                _app.data('dialogFunc', null);
+                func.call();
+            }
+            else return 'There is nothing to exec.';
+        }
     }
 
     _app.dom('#kish-input').on( "keypress keyup keydown", (e) => {
