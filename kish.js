@@ -31,8 +31,10 @@
         }
 
         this.dialog = (arg, func) => {
-            Kish.print(`${arg} <code>y/n</code>`);
-            _app.data('dialogFunc', func);
+            if(func){
+                Kish.print(`${arg} <code>y/n</code>`);
+                _app.data('dialogFunc', func);
+            }
         }
 
         this.echo = function(arg){
@@ -66,6 +68,26 @@
         }
 
         this.exit = () => _app.close();
+
+        this.gitinfo = () => {
+            let branchRequest = new XMLHttpRequest();
+            branchRequest.onreadystatechange = () => {
+                if(branchRequest.readyState === XMLHttpRequest.DONE){
+                    let branch = branchRequest.responseText.match(/ref:\s?(.*)/)[1];
+                    let messageRequest = new XMLHttpRequest();
+                    messageRequest.onreadystatechange = () => {
+                        if(messageRequest.readyState === XMLHttpRequest.DONE){
+                            let message = messageRequest.responseText;
+                            Kish.print(`<kit-badge class='-orange kit-font-m'>${branch}</kit-badge><div class='kit-font-s'>Message: ${message}</div>`, 'gitinfo');
+                        }
+                    }
+                    messageRequest.open('GET', './.git/COMMIT_EDITMSG');
+                    messageRequest.send();
+                }
+            }
+            branchRequest.open('GET', './.git/HEAD');
+            branchRequest.send();
+        }
 
         this.install = function(arg){
             let args = arg.split(" ");
