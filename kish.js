@@ -123,15 +123,14 @@
             if(!_appid) return 'Please put the app id and try again.'
             const APIEP = 'https://kpkg.herokuapp.com/api/v1/apps/'
             $.getJSON( APIEP + _appid, (data) => {
-                //console.warn(data);
-                //Kish.print(JSON.stringify(data), 'kpt');
                 if(data.status == 'FAILED') Kish.print(data.error || 'ERROR', 'kpt');
                 else if(data.status == 'SUCCESS'){
                     let _verdata;
                     switch (_cmd) {
                         case 'install':
+                        case 'i':
                             if(!_ver) _ver = 'latest';
-                            _verdata = data.versions[0]
+                            _verdata = data.versions[0];
                             for(let i of data.versions) {
                                 if(i.name == _ver) _verdata = i;
                             }
@@ -142,17 +141,17 @@
                             break;
                         case 'uninstall':
                             if(!_ver) _ver = 'latest';
-                            _verdata = data.versions[0]
+                            _verdata = data.versions[0];
                             for(let i of data.versions) {
                                 if(i.name == _ver) _verdata = i;
                             }
-                            console.log('バージョン', _verdata);
                             if(_opt == '-y') Kish.uninstall(_verdata.path);
                             else Kish.dialog(`Would you uninstall "${data.data.name}"?`, () => {
                                 Kish.uninstall(_verdata.path);
                             });
                             break;
                         case 'search':
+                        case 's':
                             //Kish.print(JSON.stringify(data.data), 'kpt');
                             Kish.print(`The app "${data.data.appid}" is found on kpt.
                                         <h2>${data.data.name} <span class='kit-sub'>${data.data.appid}</span></h2>
@@ -170,6 +169,7 @@
                                 }
                             }
                         default:
+                            Kish.print('Command not found.', 'kpt');
                             break;
                     }
                 }
