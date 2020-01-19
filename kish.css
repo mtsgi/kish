@@ -66,10 +66,12 @@
   margin-bottom: 44px;
 }
 
+#kish-out h1,
 #kish-out h2,
 #kish-out h3,
 #kish-out h4 {
   margin: 0;
+  border: none;
 }
 
 #kish-out code {

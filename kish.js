@@ -154,7 +154,7 @@
                         case 's':
                             //Kish.print(JSON.stringify(data.data), 'kpt');
                             Kish.print(`The app "${data.data.appid}" is found on kpt.
-                                        <h2>${data.data.name} <span class='kit-sub'>${data.data.appid}</span></h2>
+                                        <h1>${data.data.name} <span class='kit-sub'>${data.data.appid}</span></h1>
                                         <code class='kit-block'>${data.data.desc.replace(/\n/gi, '<br>') || 'No description.'}</code>
                                         <div class='kit-sub'>Registered : ${data.data.created_at}</div>
                             `, 'kpt');
@@ -168,6 +168,7 @@
                                     `, 'kpt');
                                 }
                             }
+                            break;
                         default:
                             Kish.print('Command not found.', 'kpt');
                             break;
