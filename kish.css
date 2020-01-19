@@ -66,6 +66,16 @@
   margin-bottom: 44px;
 }
 
+#kish-out h2,
+#kish-out h3,
+#kish-out h4 {
+  margin: 0;
+}
+
+#kish-out code {
+  text-shadow: none;
+}
+
 #kish-logo {
   display: inline-block;
   background-image: url(logo-white.png);
@@ -118,6 +128,6 @@
 }
 
 .kish-highlight{
-  padding: 0 5px;
+  padding: 0 0 0 5px;
   color: #ceffb8;
 }

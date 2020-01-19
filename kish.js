@@ -43,7 +43,7 @@
             return _r;
         }
 
-        this.eval = (arg) => { return eval(arg) }
+        this.eval = arg => eval(arg);
     
         this.exec = function(arg){
             let cmd = arg.split(" ", 1);
@@ -51,7 +51,7 @@
             kishHistory.unshift( arg );
             kishCur = -1;
             if( arg.indexOf(" ") != -1 ) args = arg.substring( arg.indexOf(" ") + 1 );
-            _app.dom('#kish-out').append(`<div class='kish-item'><i class='fa fa-dollar-sign'></i><span class='kish-highlight'>${cmd}</span>${args}</div>`);
+            _app.dom('#kish-out').append(`<div class='kish-item'><i class='fa fa-dollar-sign'></i><span class='kish-highlight'>${cmd} </span>${args}</div>`);
             if( !Kish[cmd] ){
                 _app.dom('#kish-out').append(`<div class='kish-item'><i class='fa fa-angle-double-right'></i> kishコマンドは存在しません：${cmd}</div>`);
                 return false;  
@@ -115,7 +115,66 @@
             return "Start installing...";
         }
     
-        this.kish = () => 'kish v0.4.1';
+        this.kish = () => 'kish v0.4.2';
+
+        this.kpt = arg => {
+            let [_cmd, _appid, _ver, _opt] = arg.split(' ');
+            if(!_cmd) return 'Usage: kpt [command] [appid] [version]'
+            if(!_appid) return 'Please put the app id and try again.'
+            const APIEP = 'https://kpkg.herokuapp.com/api/v1/apps/'
+            $.getJSON( APIEP + _appid, (data) => {
+                //console.warn(data);
+                //Kish.print(JSON.stringify(data), 'kpt');
+                if(data.status == 'FAILED') Kish.print(data.error || 'ERROR', 'kpt');
+                else if(data.status == 'SUCCESS'){
+                    let _verdata;
+                    switch (_cmd) {
+                        case 'install':
+                            if(!_ver) _ver = 'latest';
+                            _verdata = data.versions[0]
+                            for(let i of data.versions) {
+                                if(i.name == _ver) _verdata = i;
+                            }
+                            if(_opt == '-y') Kish.install(_verdata.path);
+                            else Kish.dialog(`Would you install "${data.data.name}" version ${_verdata.name}(${_verdata.public_uid}) on your kit?`, () => {
+                                Kish.install(_verdata.path);
+                            });
+                            break;
+                        case 'uninstall':
+                            if(!_ver) _ver = 'latest';
+                            _verdata = data.versions[0]
+                            for(let i of data.versions) {
+                                if(i.name == _ver) _verdata = i;
+                            }
+                            console.log('バージョン', _verdata);
+                            if(_opt == '-y') Kish.uninstall(_verdata.path);
+                            else Kish.dialog(`Would you uninstall "${data.data.name}"?`, () => {
+                                Kish.uninstall(_verdata.path);
+                            });
+                            break;
+                        case 'search':
+                            //Kish.print(JSON.stringify(data.data), 'kpt');
+                            Kish.print(`The app "${data.data.appid}" is found on kpt.
+                                        <h2>${data.data.name} <span class='kit-sub'>${data.data.appid}</span></h2>
+                                        <code class='kit-block'>${data.data.desc.replace(/\n/gi, '<br>') || 'No description.'}</code>
+                                        <div class='kit-sub'>Registered : ${data.data.created_at}</div>
+                            `, 'kpt');
+                            for(let i of data.versions) {
+                                if(!_ver || i.name == _ver) {
+                                    Kish.print(`Version "${i.name}" :
+                                                <h3>${i.public_uid}</h3>
+                                                <code class='kit-block'>${i.desc.replace(/\n/gi, '<br>') || 'No description.'}</code>
+                                                <div class='kit-sub'>Path : ${i.path}</div>
+                                                <div class='kit-sub'>Registered : ${i.created_at}</div>
+                                    `, 'kpt');
+                                }
+                            }
+                        default:
+                            break;
+                    }
+                }
+            });
+        }
 
         this.launch = function(arg){
             args = arg.split(" ");
