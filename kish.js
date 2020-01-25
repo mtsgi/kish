@@ -97,6 +97,8 @@
                 iobj.id = data.id;
                 iobj.name = data.name;
                 iobj.icon = args[0] + data.icon;
+                iobj.version = data.version;
+                if( args[1] ) iobj.kpt = args[1];
                 _app.data('iobj', iobj);
                 Kish.dialog(`Are you sure to install ${iobj.name}?`, () => {
                     if(_app.data('iobj')){
@@ -119,9 +121,43 @@
 
         this.kpt = arg => {
             let [_cmd, _appid, _ver, _opt] = arg.split(' ');
-            if(!_cmd) return 'Usage: kpt [command] [appid] [version]'
-            if(!_appid) return 'Please put the app id and try again.'
-            const APIEP = 'https://kpkg.herokuapp.com/api/v1/apps/'
+            const APIEP = 'https://kpkg.herokuapp.com/api/v1/apps/';
+            if(!_cmd) return 'Usage: kpt [command] [appid] [version]';
+            if(_cmd == 'update'){
+                let count = 0, installed = [...System.installed], itr = 0;
+                _app.data('replaceInstalled', installed);
+                for(let [index, i] of installed.entries()) {
+                    if(i.kpt){
+                        installed = _app.data('replaceInstalled');
+                        $.getJSON( APIEP + i.kpt, (data) => {
+                            if(data.status == 'FAILED') Kish.print(`Unknown app: ${i.kpt}`, 'kpt');
+                            else if(data.status == 'SUCCESS'){
+                                let defver = data.versions[0].def_version || data.versions[0].name;
+                                if(i.version != defver){
+                                    Kish.print(`${i.kpt} <strong class='kit-badge -green'>${i.version}</strong><span class='kit-font-s'>${i.path}</span> → <strong class='kit-badge -limegreen'>${defver}</strong><span class='kit-font-s'>${data.versions[0].path}</span>`, 'kpt');
+                                    installed[index]['version'] = defver;
+                                    installed[index]['path'] = data.versions[0].path;
+                                    installed[index]['name'] = data.data.name;
+                                    installed[index]['icon'] = data.versions[0].path + data.versions[0].icon;
+                                    _app.data('replaceInstalled', installed);
+                                    count ++;
+                                }
+                                else Kish.print(`${i.kpt} <strong class='kit-badge -black'>${i.version}</strong> is already up to date.`, 'kpt');
+                            }
+                        });
+                    }
+                    itr ++;
+                }
+                Kish.dialog(`Are you sure you want to try to updates about following app(s)?`, ()=> {
+                    let newInstalled = _app.data('replaceInstalled');
+                    System.installed = newInstalled;
+                    localStorage.setItem("kit-installed", JSON.stringify(System.installed));
+                    Kish.print(`Completed updating ${count} app(s).`, 'kpt');
+                    $.getJSON("config/apps.json", System.initLauncher);
+                });
+                return;
+            }
+            if(!_appid) return 'Please put the app id and try again.';
             $.getJSON( APIEP + _appid, (data) => {
                 if(data.status == 'FAILED') Kish.print(data.error || 'ERROR', 'kpt');
                 else if(data.status == 'SUCCESS'){
@@ -136,23 +172,23 @@
                             }
                             if(_opt == '-y') Kish.install(_verdata.path);
                             else Kish.dialog(`Would you install "${data.data.name}" version ${_verdata.name}(${_verdata.public_uid}) on your kit?`, () => {
-                                Kish.install(_verdata.path);
+                                Kish.install(`${_verdata.path} ${data.data.appid}`);
                             });
                             break;
                         case 'uninstall':
-                            if(!_ver) _ver = 'latest';
-                            _verdata = data.versions[0];
-                            for(let i of data.versions) {
-                                if(i.name == _ver) _verdata = i;
+                            let _path;
+                            for(let i of System.installed) {
+                                if(i.kpt == _appid) _path = i.path;
                             }
-                            if(_opt == '-y') Kish.uninstall(_verdata.path);
-                            else Kish.dialog(`Would you uninstall "${data.data.name}"?`, () => {
-                                Kish.uninstall(_verdata.path);
+                            if(_opt == '-y') Kish.uninstall(_path);
+                            else Kish.dialog(`Would you uninstall "${_appid} from ${_path}"?`, () => {
+                                Kish.uninstall(_path);
                             });
+                            break;
+                        case 'update':
                             break;
                         case 'search':
                         case 's':
-                            //Kish.print(JSON.stringify(data.data), 'kpt');
                             Kish.print(`The app "${data.data.appid}" is found on kpt.
                                         <h1>${data.data.name} <span class='kit-sub'>${data.data.appid}</span></h1>
                                         <code class='kit-block'>${data.data.desc.replace(/\n/gi, '<br>') || 'No description.'}</code>
