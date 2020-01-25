@@ -117,7 +117,7 @@
             return "Start installing...";
         }
     
-        this.kish = () => 'kish v0.4.2';
+        this.kish = () => 'kish v0.5.0';
 
         this.kpt = arg => {
             let [_cmd, _appid, _ver, _opt] = arg.split(' ');
